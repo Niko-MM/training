@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from db.models import User
+from db.models import User, Transaction
 from db.session import async_session_maker
 
 
@@ -9,6 +9,13 @@ async def save_user(session: AsyncSession, user: User):
     await session.commit()
     await session.refresh(user)
     return user
+
+
+async def save_transaction(session: AsyncSession, transaction: Transaction):
+    session.add(transaction)
+    await session.commit()
+    await session.refresh(transaction)
+    return transaction
 
 
 async def create_user(nick: str, age: int, balance: int):
@@ -33,3 +40,19 @@ async def get_user_by_id(id_):
         result = await session.execute(select(User).where(User.id == id_))
         user = result.scalar()
         return user
+
+
+async def add_transaction(user_id: int, amount: int):
+    user = await get_user_by_id(user_id)
+
+    if not user:
+        raise ValueError("Пользователь не найден")
+
+    if amount == 0:
+        raise ValueError("Сумма не может быть нулевой")
+
+    transaction = Transaction(user_id=user_id, amount=amount)
+
+    async with async_session_maker() as session:
+        result = await save_transaction(session, transaction)
+        return result
