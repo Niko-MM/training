@@ -18,7 +18,7 @@ async def create_user(nick: str, age: int, balance: int):
     user = User(nick=nick, age=age, balance=balance)
 
     async with async_session_maker() as session:
-        result =  await save_user(session=session, user=user)
+        result = await save_user(session=session, user=user)
         return result
 
 
@@ -26,7 +26,7 @@ async def get_all():
     async with async_session_maker() as session:
         result = await session.execute(select(User))
         return list(result.scalars())
-    
+
 
 async def get_user_by_id(id_):
     async with async_session_maker() as session:
