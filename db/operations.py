@@ -18,7 +18,7 @@ async def save_transaction(session: AsyncSession, transaction: Transaction):
     return transaction
 
 
-async def create_user(nick: str, age: int, balance: int):
+async def create_user(nick: str, age: int, balance: int = 0):
     if not nick or age <= 0 or balance < 0:
         raise ValueError("Некорректные данные")
 
@@ -42,16 +42,16 @@ async def get_user_by_id(id_):
         return user
 
 
-async def add_transaction(user_id: int, amount: int):
+async def add_transaction(user_id: int, transaction_amount: int):
     user = await get_user_by_id(user_id)
 
     if not user:
         raise ValueError("Пользователь не найден")
 
-    if amount == 0:
+    if transaction_amount == 0:
         raise ValueError("Сумма не может быть нулевой")
 
-    transaction = Transaction(user_id=user_id, amount=amount)
+    transaction = Transaction(user_id=user_id, transaction_amount=transaction_amount)
 
     async with async_session_maker() as session:
         result = await save_transaction(session, transaction)
