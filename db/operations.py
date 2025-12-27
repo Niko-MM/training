@@ -19,7 +19,7 @@ async def save_transaction(session: AsyncSession, transaction: Transaction):
 
 
 async def create_user(nick: str, age: int, balance: int = 0):
-    if not nick or age <= 0 or balance < 0:
+    if not nick or age <= 0:
         raise ValueError("Некорректные данные")
 
     user = User(nick=nick, age=age, balance=balance)
